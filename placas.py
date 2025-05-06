@@ -44,7 +44,7 @@ def dibujar_resultados(imagen, resultados):
     return imagen
 
 
-def detectar_texto(ruta_imagen):
+def detectar_texto(ruta_imagen, colab=True):
     imagen_filtrada = filtrar_imagen(ruta_imagen)
     lector = easyocr.Reader(['es', 'en'])
     resultados = lector.readtext(imagen_filtrada)
@@ -55,9 +55,19 @@ def detectar_texto(ruta_imagen):
     mostrar_resultados(resultados)
 
     imagen_con_resultados = dibujar_resultados(imagen_original, resultados)
-    cv2_imshow(imagen_con_resultados)
+
+    if colab:
+        cv2_imshow(imagen_con_resultados)
+    else:
+        cv2.imshow("Resultado", imagen_con_resultados)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
-    detectar_texto("./images/placa_q.jpg")
-    detectar_texto("./images/placa_4.jpg")
+    # Para Google Colab
+    detectar_texto("./images/placa_q.jpg", colab=True)
+    detectar_texto("./images/placa_4.jpg", colab=True)
+
+    # Para ejecución local, descomenta esta línea:
+    # detectar_texto("./images/placa_q.jpg", colab=False)
