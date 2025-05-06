@@ -9,28 +9,39 @@ import easyocr
 from google.colab.patches import cv2_imshow
 
 
+def crear_mascara_negra(imagen_gris):
+    return np.where(imagen_gris < 50, 255, 0).astype(np.uint8)
+
+
+def crear_mascara_blanca(imagen_desenfocada):
+    return np.where(imagen_desenfocada > 120, 255, 0).astype(np.uint8)
+
+
 def filtrar_imagen(ruta_imagen):
     imagen = cv2.imread(ruta_imagen)
     imagen_gris = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
 
-    # Filtro negro
-    mascara_negra = np.zeros(imagen_gris.shape, dtype=np.uint8)
-    for y in range(imagen_gris.shape[0]):
-        for x in range(imagen_gris.shape[1]):
-            if imagen_gris[y, x] < 50:
-                mascara_negra[y, x] = 255
-
-    # Desenfoque gaussiano
+    mascara_negra = crear_mascara_negra(imagen_gris)
     desenfoque = cv2.GaussianBlur(mascara_negra, (21, 21), sigmaX=9)
-
-    # Filtro blanco
-    mascara_blanca = np.zeros(desenfoque.shape, dtype=np.uint8)
-    for y in range(desenfoque.shape[0]):
-        for x in range(desenfoque.shape[1]):
-            if desenfoque[y, x] > 120:
-                mascara_blanca[y, x] = 255
+    mascara_blanca = crear_mascara_blanca(desenfoque)
 
     return mascara_blanca
+
+
+def mostrar_resultados(resultados):
+    for (_, texto, confianza) in resultados:
+        print(f"Detectado: '{texto}' (confianza: {confianza:.2f})")
+
+
+def dibujar_resultados(imagen, resultados):
+    for (caja, texto, _) in resultados:
+        (tl, tr, br, bl) = caja
+        tl = tuple(map(int, tl))
+        br = tuple(map(int, br))
+        cv2.rectangle(imagen, tl, br, (0, 255, 0), 2)
+        cv2.putText(imagen, texto, tl,
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
+    return imagen
 
 
 def detectar_texto(ruta_imagen):
@@ -41,17 +52,10 @@ def detectar_texto(ruta_imagen):
     imagen_original = cv2.imread(ruta_imagen)
 
     print(f"\nResultados para {ruta_imagen}:")
-    for (caja, texto, confianza) in resultados:
-        (tl, tr, br, bl) = caja
-        tl = tuple(map(int, tl))
-        br = tuple(map(int, br))
+    mostrar_resultados(resultados)
 
-        cv2.rectangle(imagen_original, tl, br, (0, 255, 0), 2)
-        cv2.putText(imagen_original, texto, tl,
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
-        print(f"Detectado: '{texto}' (confianza: {confianza:.2f})")
-
-    cv2_imshow(imagen_original)
+    imagen_con_resultados = dibujar_resultados(imagen_original, resultados)
+    cv2_imshow(imagen_con_resultados)
 
 
 if __name__ == "__main__":
