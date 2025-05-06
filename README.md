@@ -109,5 +109,5 @@ They are located inside the `images/` folder.
 
 ## 📝 Author
 
-Developed by \[Luis Díaz].
+Developed by Luis Díaz.
 For educational purposes
