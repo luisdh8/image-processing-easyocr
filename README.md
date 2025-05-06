@@ -6,14 +6,14 @@ It includes preprocessing techniques to improve recognition and can run both loc
 ---
 
 ## 📁 Project Structure
-
+```
 actividad1/
 ├── images/
 │   ├── placa\_q.jpg
 │   └── placa\_4.jpg
 ├── placas.py
 └── README.md
-
+```
 
 ---
 
@@ -109,12 +109,5 @@ They are located inside the `images/` folder.
 
 ## 📝 Author
 
-Developed by \[Your Name].
-For educational and research purposes.
-
----
-
-```
-
-¿Quieres que agregue una sección de "Posibles mejoras" o "Errores comunes y cómo resolverlos"?
-```
+Developed by \[Luis Díaz].
+For educational purposes
